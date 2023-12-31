@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import com.tweetapp.application.model.ForgotPassword;
 import com.tweetapp.application.model.Login;
@@ -85,10 +86,10 @@ public class RegistrationService {
     
     public boolean login(String h,String p) {
     	if(repo.findById(h).isPresent()) {
-    		Optional<Registration> o=repo.findById(h);
-    		if(o.get().getPassword().equals(p)) {
+    		Registration o=repo.findById(h).get();
+    		if(o.getPassword().equals(p)) {
     			h1=true;
-    			u1=o.get().getLogin_id();
+    			u1=o.getLogin_id();
     			return true;
     		}
     	}
@@ -181,25 +182,14 @@ public void postmessage(Tweet t1) throws NotAvaliableException {
 		Tweet t=tweetRepo.findById(username).get();
 		
 		String m=t.getTweetmessage();
-		String p[]=m.split(",");
-		System.out.println(u.getTweetMessagetoBeUpdated());
-		for(int i=0;i<p.length;i++) {
-			if(p[i].equalsIgnoreCase(u.getTweetMessagetoBeUpdated()) && p[i]!=null) {
-				p[i]=u.getTweetmessage();
-				System.out.println(p[i]);
-			}
-			if(p[i]!=null) {
-			System.out.println(p[i]);
-			}
+		if(m.contains(u.getTweetMessagetoBeUpdated())) {
+		m=m.replace(u.getTweetMessagetoBeUpdated(), u.getTweetmessage());
 		}
-		System.out.print(p);
-		String k="";
-		for(int i=0;i<p.length;i++) {
-			k=k+p[i]+","; 
+		else {
+			throw new NotAvaliableException("The tweet is not present to be updated");
 		}
-		
-		System.out.println(k);
-		t.setTweetmessage(k);
+
+		t.setTweetmessage(m);
 		tweetRepo.save(t);
 		}
 	}
