@@ -20,7 +20,7 @@ public class Registration {
 	private String email;
 	private String password;
 	private String cnf_password;
-	private  int contact_number;
+	private  Integer contact_number;
 	
 
 }

@@ -57,9 +57,9 @@ public class RegistrationController {
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(registrationService.getAllUsers());
 	}
 	
-	@GetMapping("/api/v1.0/tweets/login/{k}/{pa}")
-	public ResponseEntity<String> login(@PathVariable String k,@PathVariable String pa){
-		if(registrationService.login(k, pa)) {
+	@GetMapping("/api/v1.0/tweets/login/{username}/{password}")
+	public ResponseEntity<String> login(@PathVariable String username,@PathVariable String password){
+		if(registrationService.login(username, password)) {
 			return ResponseEntity.status(HttpStatus.ACCEPTED).body("Login Successful");
 		}
 		else {

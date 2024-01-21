@@ -17,6 +17,7 @@ import com.tweetapp.application.model.Tweet;
 import com.tweetapp.application.model.UpdateTweet;
 import com.tweetapp.application.repo.RegistrationRepo;
 import com.tweetapp.application.repo.TweetRepo;
+import com.tweetapp.application.util.TweetAppUtility;
 
 import ch.qos.logback.classic.Logger;
 
@@ -31,7 +32,6 @@ public class RegistrationService {
     
     public boolean h1;
     public String u1;
-    //private static final Logger l=Logger
     
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
@@ -40,26 +40,26 @@ public class RegistrationService {
     
     public void checkNull(Registration r) throws InvalidFieldException{
     	if(r.getPassword().isEmpty()) {
-    		throw new InvalidFieldException("Password field is mandatory");
+    		throw new InvalidFieldException(TweetAppUtility.PASSWORD_MANDATORY);
     	}
     	if(r.getLogin_id().isEmpty()) {
-    		throw new InvalidFieldException("LoginId field is mandatory");
+    		throw new InvalidFieldException(TweetAppUtility.LOGINID_MANDATORY);
     	}
     	if(r.getLast_name().isEmpty()) {
-    		throw new InvalidFieldException("LastName field is mandatory");
+    		throw new InvalidFieldException(TweetAppUtility.LASTNAME_MANDATORY);
     	}
     	if(r.getFirst_name().isEmpty()) {
-    		throw new InvalidFieldException("FirstName field is mandatory");
+    		throw new InvalidFieldException(TweetAppUtility.FIRSTNAME_MANDATORY);
     	}
     	if(r.getEmail().isEmpty()) {
-    		throw new InvalidFieldException("Email field is mandatory");
+    		throw new InvalidFieldException(TweetAppUtility.EMAIL_MANDATORY);
     	}
     	
-    	if((Integer)r.getContact_number()==null) {
-    		throw new InvalidFieldException("Contact number field is mandatory");
+    	if(r.getContact_number()==null) {
+    		throw new InvalidFieldException(TweetAppUtility.CONTACTNUMBER_MANDATORY);
     	}
     	if(r.getCnf_password().isEmpty()) {
-    		throw new InvalidFieldException("Confirm password field is mandatory");
+    		throw new InvalidFieldException(TweetAppUtility.PASSWORD_MANDATORY);
     	}
     }
     
@@ -76,12 +76,10 @@ public class RegistrationService {
     	}
        checkNull(r);
        repo.save(r);
-      // kafkaTemplate.send("user-topic", "Saved successfully", r);
     }
     
     public List<Registration> getAllUsers(){
     	return repo.findAll();
-    	//kafkaTemplate1.send("user-topic2", "ccz",repo.findAll());
     }
     
     public boolean login(String h,String p) {
@@ -96,13 +94,11 @@ public class RegistrationService {
     	h1=false;
     	return false;
     }
-    public Registration searchByUsername(String j) throws NotAvaliableException {
-    	if(!repo.findById(j).isPresent()) {
-    		System.out.println((j));
+    public Registration searchByUsername(String username) throws NotAvaliableException {
+    	if(!repo.findById(username).isPresent()) {
     		throw new NotAvaliableException("Username does not exist");
     	}
-    	System.out.println("inside");
-    	Registration r=repo.findById(j).get();
+    	Registration r=repo.findById(username).get();
     	return r;
     }
   
@@ -110,7 +106,6 @@ public void postmessage(Tweet t1) throws NotAvaliableException {
 	   Tweet t=new Tweet();
 	   System.out.println(h1);
 	   if(h1==true ) {
-		  // Tweet t=new Tweet();
 		   Tweet y=new Tweet();
 		   Optional<Tweet> j=tweetRepo.findById(t1.getUsername());
 		   if(!(j==null)) {
@@ -140,7 +135,6 @@ public void postmessage(Tweet t1) throws NotAvaliableException {
 	   }
 	   tweetRepo.save(t);
 	   String p=t1.getTweetmessage();
-	   //kafkaTemplate.send("user-topic", t.getUsername(), p);
 	   
    }
 
@@ -158,7 +152,6 @@ public void postmessage(Tweet t1) throws NotAvaliableException {
  	return false;
 }
  public List<Tweet> getAllTweets(){
-	 //kafkaTemplate.send("user-topic2", "ccz","Tweet List has been generated");
 	 return tweetRepo.findAll();
 	 
 	 
@@ -255,12 +248,10 @@ public void postmessage(Tweet t1) throws NotAvaliableException {
 		  throw new NotAvaliableException("Login First");
 	  }
 	  String d=r.getReply()+":"+u1+":"+r.getTweetmessage();
-	 // kafkaTemplate.send("user-topic1", r.getUsername(),d );
   }
   
   public void logout() {
 	  h1=false;
-	  System.out.println(h1);
   }
  
 }
